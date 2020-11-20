@@ -1,3 +1,4 @@
+const constants = require("@utils/constants");
 module.exports = {
   commands: "discord",
   description: "A link to Kéllee's Discord server.",
