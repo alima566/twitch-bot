@@ -1,5 +1,5 @@
 const constants = require("@utils/constants");
-const commandBase = require("@commands/commandBase");
+const channelPrefix = require("@utils/channelPrefix");
 const commandPrefixSchema = require("@schemas/commandPrefixSchema");
 module.exports = {
   commands: ["prefix", "setprefix"],
@@ -25,7 +25,7 @@ module.exports = {
         }
       );
       client.say(channel, `/me The prefix for this bot is now "${prefix}"`);
-      commandBase.updateCache(channelName, prefix);
+      channelPrefix.updateCache(channelName, prefix);
     }
   },
 };
