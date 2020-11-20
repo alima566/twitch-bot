@@ -9,6 +9,7 @@ const mongo = require("@utils/mongo");
 const loadFeatures = require("@features/loadFeatures");
 const { PREFIX } = require("@root/config.json");
 const channelPrefix = require("@utils/channelPrefix");
+const constants = require("@utils/constants");
 
 const opts = {
   options: {
@@ -111,6 +112,7 @@ client.on("message", async (channel, userstate, message, self) => {
 });
 
 const checkTwitchChat = (userstate, message, channel) => {
+  if (userstate.mod || constants.isBroadcaster(userstate.username)) return;
   if (
     message.includes("bigfollows .com") ||
     message.includes("bigfollows.com") ||
