@@ -2,6 +2,7 @@ const constants = require("@utils/constants");
 module.exports = {
   commands: "discord",
   description: "A link to Kéllee's Discord server.",
+  isModOnly: true,
   callback: (client, channel, message, userstate, args) => {
     if (userstate.mod || constants.isBroadcaster(userstate.username)) {
       client.say(
