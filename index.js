@@ -39,7 +39,7 @@ client.on("connected", async (address, port) => {
   console.log(`Connected: ${address}:${port}`);
   await mongo();
   loadFeatures(client);
-  channelPrefix.loadPrefixes(client);
+  channelPrefix.loadPrefixes();
 });
 
 client.on("message", async (channel, userstate, message, self) => {
