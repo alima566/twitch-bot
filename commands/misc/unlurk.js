@@ -10,7 +10,7 @@ module.exports = {
   commands: "unlurk",
   description: "Tells the chat you have returned from your lurk.",
   cooldown: 15,
-  callback: (client, channel) => {
+  callback: (client, channel, message, userstate) => {
     const index = constants.getRandomElement(unlurk);
     var response = unlurk[index].replace("<username>", userstate.username);
     client.say(channel, `/me ${response}`);

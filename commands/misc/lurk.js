@@ -11,7 +11,7 @@ module.exports = {
   commands: "lurk",
   description: "Tells the chat you are entering lurk mode.",
   cooldown: 15,
-  callback: (client, channel) => {
+  callback: (client, channel, message, userstate) => {
     const index = constants.getRandomElement(lurk);
     var response = lurk[index].replace("<username>", userstate.username);
     client.say(channel, `/me ${response}`);
