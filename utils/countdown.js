@@ -1,16 +1,14 @@
-const cdStarted = false;
-
-module.exports = {
-  cdStarted,
+let cd = {
+  cdStarted: false,
 };
 
-module.exports.countdown = (channel, seconds) => {
+const countdown = (client, channel, seconds) => {
   let interval = setInterval(() => {
     if (seconds == 0) {
       client.say(channel, `/me Go! kellee1GG`);
       client.say(channel, `/color HotPink`);
       clearInterval(interval);
-      //cdStarted = false;
+      cd.cdStarted = false;
     } else if (seconds == 20) {
       client.say(channel, `/me Countdown happening in 20 seconds...`);
     } else if (seconds == 10) {
@@ -24,7 +22,7 @@ module.exports.countdown = (channel, seconds) => {
   }, 1000);
 };
 
-module.exports.countdownTeams = (channel, color) => {
+const countdownTeams = (client, channel, color) => {
   if (color.toLowerCase() === "r") {
     client.say(channel, `/color Firebrick`);
     client.say(channel, `/me Team Battle: Red Team`);
@@ -38,5 +36,11 @@ module.exports.countdownTeams = (channel, color) => {
     client.say(channel, `/color SpringGreen`);
     client.say(channel, `/me Team Battle: Green Team`);
   }
-  countdown(channel, 20);
+  countdown(client, channel, 20);
+};
+
+module.exports = {
+  cd,
+  countdown,
+  countdownTeams,
 };
