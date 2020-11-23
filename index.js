@@ -111,7 +111,6 @@ client.on("message", async (channel, userstate, message, self) => {
   }
 });
 
-const checkTwitchChat = (userstate, message, channel) => {
   if (userstate.mod || constants.isBroadcaster(userstate.username)) return;
   if (
     message.includes("bigfollows .com") ||
@@ -120,13 +119,23 @@ const checkTwitchChat = (userstate, message, channel) => {
       "Wanna b̔ecome̤ famoͅus̈́?̿ Bu͗y f̭ollow̮ers, primes and viewers on ̫https://clck.ru/R9gQV ͉(bigfollows .com)̰"
     )
   ) {
-    client.say(channel, `/me No, I don't wanna become famous. Good bye!`);
-    client.ban(channel, userstate.username).catch((err) => {
-      console.log(err);
-    });
-    // client.deletemessage(channel, userstate.id).catch((err) => {
-    //   console.log(err);
-    // });
+    client
+      .ban(channel, userstate.id)
+      .then((data) => {
+        client.say(channel, `/me No, I don't wanna become famous. Good bye!`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    // client
+    //   .deletemessage(channel, userstate.id)
+    //   .then((data) => {
+    //     client.say(channel, `/me No, I don't wanna become famous. Good bye!`);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }
 };
 
