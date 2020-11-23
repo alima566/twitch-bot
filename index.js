@@ -64,7 +64,12 @@ client.on("message", async (channel, userstate, message, self) => {
       callback,
     } = client.commands.get(cmdName);
 
-    if (!userstate.mod && isModOnly) return;
+    if (
+      !userstate.mod &&
+      !constants.isBroadcaster(userstate.username) &&
+      isModOnly
+    )
+      return;
 
     if (typeof commands === "string") {
       commands = [commands];
