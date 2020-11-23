@@ -111,6 +111,7 @@ client.on("message", async (channel, userstate, message, self) => {
   }
 });
 
+const checkTwitchChat = (userstate, message, channel) => {
   if (userstate.mod || constants.isBroadcaster(userstate.username)) return;
   if (
     message.includes("bigfollows .com") ||
