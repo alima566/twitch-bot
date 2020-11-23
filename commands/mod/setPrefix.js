@@ -9,23 +9,23 @@ module.exports = {
   description: "Sets the command prefix for the channel.",
   isModOnly: true,
   callback: async (client, channel, message, userstate, args) => {
-    if (userstate.mod || constants.isBroadcaster(userstate.username)) {
-      const channelName = channel.slice(1);
-      const prefix = args[0];
-      await commandPrefixSchema.findOneAndUpdate(
-        {
-          _id: channelName,
-        },
-        {
-          _id: channelName,
-          prefix,
-        },
-        {
-          upsert: true,
-        }
-      );
-      client.say(channel, `/me The prefix for this bot is now "${prefix}"`);
-      channelPrefix.updateCache(channelName, prefix);
-    }
+    //if (userstate.mod || constants.isBroadcaster(userstate.username)) {
+    const channelName = channel.slice(1);
+    const prefix = args[0];
+    await commandPrefixSchema.findOneAndUpdate(
+      {
+        _id: channelName,
+      },
+      {
+        _id: channelName,
+        prefix,
+      },
+      {
+        upsert: true,
+      }
+    );
+    client.say(channel, `/me The prefix for this bot is now "${prefix}"`);
+    channelPrefix.updateCache(channelName, prefix);
+    //}
   },
 };
