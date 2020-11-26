@@ -1,12 +1,11 @@
 const fetch = require("node-fetch");
-module.exports = (client) => {
-  client.on("raided", (channel, username, viewers) => {
-    client.say(
-      channel,
-      `/me Incoming raid! PogChamp Thank you @${username} for raiding the channel with ${viewers} viewers! Welcome raiders!`
-    );
-    shoutout(client, channel, username);
-  });
+
+module.exports = (client, channel, username, viewers) => {
+  client.say(
+    channel,
+    `/me Incoming raid! PogChamp Thank you @${username} for raiding the channel with ${viewers} viewers! Welcome raiders!`
+  );
+  shoutout(client, channel, username);
 };
 
 const shoutout = (client, channel, username) => {
