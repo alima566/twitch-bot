@@ -44,7 +44,7 @@ client.commands = new Map();
   }
 })();
 
-(async function registerEvents(dir = "features") {
+(async function registerEvents(dir = "events") {
   let files = await fs.readdir(path.join(__dirname, dir));
   for (let file of files) {
     let stat = await fs.lstat(path.join(__dirname, dir, file));
