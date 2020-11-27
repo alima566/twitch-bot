@@ -4,6 +4,7 @@ require("dotenv").config();
 const TMI = require("tmi.js");
 const fs = require("fs").promises;
 const path = require("path");
+const mongoose = require("mongoose");
 
 const opts = {
   options: {
@@ -27,6 +28,13 @@ const client = new TMI.client(opts);
 client.connect();
 
 client.commands = new Map();
+
+mongoose.connect(process.env.MONGO_PATH, {
+  keepAlive: true,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+});
 
 (async function registerCommands(dir = "commands") {
   let files = await fs.readdir(path.join(__dirname, dir));
