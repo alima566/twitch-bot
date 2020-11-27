@@ -9,7 +9,7 @@ module.exports = (client, channel, userstate, message, self) => {
   checkTwitchChat(userstate, message, channel);
 
   const prefix = channelPrefix.getChannelPrefix()[channel.slice(1)] || PREFIX;
-  if (!message.startsWith(prefix)) return;
+  //if (!message.startsWith(prefix)) return;
 
   const cmdArgs = message.substring(message.indexOf(prefix) + 1).split(/[ ]+/);
   const cmdName = cmdArgs.shift().toLowerCase();
@@ -37,10 +37,17 @@ module.exports = (client, channel, userstate, message, self) => {
     }
 
     for (const alias of commands) {
-      const command = `${prefix}${alias.toLowerCase()}`;
+      let command =
+        alias.toLowerCase() === "kellee1glare" ||
+        alias.toLowerCase() === "gg" ||
+        alias.toLowerCase() === "uwu"
+          ? `${alias.toLowerCase()}`
+          : `${prefix}${alias.toLowerCase()}`;
+
       if (
         message.toLowerCase().startsWith(`${command} `) ||
-        message.toLowerCase() === command
+        message.toLowerCase() === command ||
+        message.toLowerCase().includes(command)
       ) {
         let cooldownString = `${channel.slice(1)}-${userstate["user-id"]}-${
           commands[0]
