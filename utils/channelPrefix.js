@@ -10,8 +10,12 @@ module.exports.updateCache = (channelName, newPrefix) => {
 
 module.exports.loadPrefixes = async () => {
   const channelName = process.env.CHANNEL_NAME.toLowerCase();
-  const result = await commandPrefixSchema.findOne({ _id: channelName });
-  if (result) {
-    channelPrefix[channelName] = result.prefix;
+  try {
+    const result = await commandPrefixSchema.findOne({ _id: channelName });
+    if (result) {
+      channelPrefix[channelName] = result.prefix;
+    }
+  } catch (err) {
+    console.log(err);
   }
 };

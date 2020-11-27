@@ -31,19 +31,22 @@ module.exports = {
       );
       return;
     }
-
-    await commandPrefixSchema.findOneAndUpdate(
-      {
-        _id: channelName,
-      },
-      {
-        _id: channelName,
-        prefix,
-      },
-      {
-        upsert: true,
-      }
-    );
+    try {
+      await commandPrefixSchema.findOneAndUpdate(
+        {
+          _id: channelName,
+        },
+        {
+          _id: channelName,
+          prefix,
+        },
+        {
+          upsert: true,
+        }
+      );
+    } catch (err) {
+      console.log(err);
+    }
     client.say(channel, `/me The prefix for this bot is now "${prefix}"`);
     channelPrefix.updateCache(channelName, prefix);
     //}
