@@ -10,7 +10,9 @@ module.exports = (
   const cumulativeMonths = ~~userstate["msg-param-cumulative-months"];
   client.say(
     channel,
-    `/me Thank you @${username} for the ${cumulativeMonths} sub! PogChamp`
+    `/me Thank you @${username} for the ${cumulativeMonths} month${
+      cumulativeMonths != 1 ? "s" : ""
+    } sub! PogChamp`
   );
   return;
 };
