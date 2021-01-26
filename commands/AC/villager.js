@@ -7,8 +7,12 @@ module.exports = {
   description: "Retrieves information about the specified AC villager.",
   cooldown: 15,
   callback: (client, channel, message, userstate, args) => {
+    let query = args.join(" ");
+    if (query.includes(" ")) {
+      query = query.replace(/ +/g, "_");
+    }
     fetch(
-      `https://api.nookipedia.com/villagers?name=${args.toLowerCase()}&nhdetails=true`,
+      `https://api.nookipedia.com/villagers?name=${query.toLowerCase()}&nhdetails=true`,
       {
         method: "GET",
         headers: {
