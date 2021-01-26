@@ -6,7 +6,7 @@ module.exports = {
   description: "Retrieves information about the specified AC villager.",
   cooldown: 15,
   callback: (client, channel, message, userstate, args) => {
-    let query = args.join(" ");
+    let query = args;
     if (query.includes(" ")) {
       query = query.replace(/ +/g, "_");
     }
