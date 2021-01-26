@@ -2,7 +2,6 @@ const fetch = require("node-fetch");
 module.exports = {
   commands: "villager",
   minArgs: 1,
-  maxArgs: 1,
   expectedArgs: "<villager_name>",
   description: "Retrieves information about the specified AC villager.",
   cooldown: 15,
