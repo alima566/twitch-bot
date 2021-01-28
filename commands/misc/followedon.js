@@ -8,7 +8,7 @@ module.exports = {
     fetch(
       `https://beta.decapi.me/twitch/followed/${process.env.CHANNEL_NAME}/${
         userstate.username
-      }?tz=America/New_York&format=${encodeURIComponent("d/m/yy g:i:s A T")}`
+      }?tz=America/New_York&format=${encodeURIComponent("d/m/Y g:i:s A T")}`
     )
       .then((response) => response.text())
       .then((data) => {
