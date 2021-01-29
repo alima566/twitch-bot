@@ -9,6 +9,7 @@ const userPokemonsSchema = mongoose.Schema({
   channel: reqString,
   user: reqString,
   pokemons: {
+    pokedexNum: Number,
     name: reqString,
     caughtWith: reqString,
     caughtOn: Date,

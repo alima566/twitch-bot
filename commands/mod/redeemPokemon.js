@@ -23,7 +23,8 @@ module.exports = {
       ? args.replace("@", "").trim()
       : args.trim();
     const index = getRandomElement(pokeBalls);
-    const pokemon = await getRandomPokemon();
+    const pokedexNum = Math.floor(Math.random() * 899);
+    const pokemon = await getRandomPokemon(pokedexNum);
     const pokeball = pokeBalls[index];
 
     const obj = {
@@ -36,6 +37,7 @@ module.exports = {
         ...obj,
         $addToSet: {
           pokemons: {
+            pokedexNum,
             name: pokemon,
             caughtWith: pokeball,
             caughtOn: new Date(),
@@ -57,10 +59,9 @@ module.exports = {
   },
 };
 
-const getRandomPokemon = () => {
+const getRandomPokemon = (pokedexNumber) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const pokedexNumber = Math.floor(Math.random() * 899);
       const body = await fetch(
         `https://pokeapi.co/api/v2/pokemon/${pokedexNumber}`
       );
