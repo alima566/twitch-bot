@@ -31,6 +31,17 @@ module.exports = {
       channel: channel.slice(1),
       user,
     };
+
+    const result = await userPokemonsSchema.findOne(obj);
+    if (result) {
+      if (alreadyCaught(result.pokemons, pokemon)) {
+        return client.say(
+          channel,
+          `/me ${user} has caught a ${pokemon}! However, they already have one so they release it back into the wild!`
+        );
+      }
+    }
+
     await userPokemonsSchema.findOneAndUpdate(
       obj,
       {
@@ -48,13 +59,14 @@ module.exports = {
         upsert: true,
       }
     );
-    const result = await userPokemonsSchema.find(obj);
 
+    const numPokemons = await userPokemonsSchema.findOne(obj);
+    const { pokemons } = numPokemons;
     return client.say(
       channel,
       `/me ${user} has captured a ${pokemon} by using a ${pokeball}! PridePog PridePog Hope you take good care of your Pokémon! 2020Rivalry You have now caught a total of ${
-        result[0].pokemons.name.length
-      } Pokémon${result[0].pokemons.name.length !== 1 ? "s" : ""}!`
+        pokemons.name.length
+      } Pokémon${pokemons.name.length !== 1 ? "s" : ""}!`
     );
   },
 };
@@ -76,4 +88,13 @@ const getRandomPokemon = (pokedexNumber) => {
 
 const capFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+const alreadyCaught = (results, pokemon) => {
+  for (const name of results.name) {
+    if (name === pokemon) {
+      return true;
+    }
+  }
+  return false;
 };
