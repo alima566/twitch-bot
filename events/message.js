@@ -38,9 +38,7 @@ module.exports = (client, channel, userstate, message, self) => {
 
     for (const alias of commands) {
       let command =
-        alias.toLowerCase() === "kellee1glare" ||
-        alias.toLowerCase() === "gg" ||
-        alias.toLowerCase() === "uwu"
+        alias.toLowerCase() === "kellee1glare" || alias.toLowerCase() === "uwu"
           ? `${alias.toLowerCase()}`
           : `${prefix}${alias.toLowerCase()}`;
 
@@ -103,14 +101,20 @@ const checkTwitchChat = (userstate, message, channel) => {
       .catch((err) => {
         console.log(err);
       });
-
-    // client
-    //   .deletemessage(channel, userstate.id)
-    //   .then((data) => {
-    //     client.say(channel, `/me No, I don't wanna become famous. Good bye!`);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+  } else if (
+    message ===
+    "Hey. I want to offer you a boost on twitch, a stable number of viewers, there are chat bots. I will offer a price lower than any competitor. Auto-start when stream became online.Pay only for the time when the stream is online.Pay by the hour! I'll provide a free test.The client has access to the panel to launch, and can control the process himself!For tech problems, a full refund. Telegram @Twitch_viewers Discord Twitch#3227"
+  ) {
+    client
+      .ban(channel, userstate.username)
+      .then((data) => {
+        client.say(
+          channel,
+          `/me No, I don't want a boost on Twitch. Get outta here!`
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 };
