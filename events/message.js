@@ -6,7 +6,7 @@ let recentlyRan = [];
 module.exports = (client, channel, userstate, message, self) => {
   if (self) return;
 
-  checkTwitchChat(userstate, message, channel);
+  checkTwitchChat(client, userstate, message, channel);
 
   const prefix = channelPrefix.getChannelPrefix()[channel.slice(1)] || PREFIX;
   //if (!message.startsWith(prefix)) return;
@@ -84,8 +84,24 @@ module.exports = (client, channel, userstate, message, self) => {
   }
 };
 
-const checkTwitchChat = (userstate, message, channel) => {
+const checkTwitchChat = (client, userstate, message, channel) => {
+  console.log(message);
   if (userstate.mod || constants.isBroadcaster(userstate.username)) return;
+
+  if (message.length > 250) {
+    client
+      .timeout(channel, userstate.username, 1, "Long message")
+      .then((data) => {
+        client.say(
+          channel,
+          `/me ${userstate.username}, the mods here don't like reading long messages. Please try to keep it short and sweet.`
+        );
+      })
+      .catch((e) => {
+        console.log(e.message);
+      });
+  }
+
   if (
     message.includes("bigfollows .com") ||
     message.includes("bigfollows.com") ||
