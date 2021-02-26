@@ -7,7 +7,7 @@ module.exports = {
   callback: async (client, channel, message, userstate, args) => {
     const obj = {
       channel: channel.slice(1),
-      user: userstate.username,
+      user: userstate.username.toLowerCase(),
     };
 
     const result = await userPokemonsSchema.find(obj);

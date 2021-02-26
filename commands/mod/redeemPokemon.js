@@ -20,8 +20,8 @@ module.exports = {
   isModOnly: true,
   callback: async (client, channel, message, userstate, args) => {
     const user = args.startsWith("@")
-      ? args.replace("@", "").trim()
-      : args.trim();
+      ? args.replace("@", "").toLowerCase().trim()
+      : args.toLowerCase().trim();
     const index = getRandomElement(pokeBalls);
     const pokedexNum = Math.floor(Math.random() * 899);
     const pokemon = await getRandomPokemon(pokedexNum);
