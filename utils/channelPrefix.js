@@ -1,14 +1,15 @@
 const commandPrefixSchema = require("@schemas/commandPrefixSchema");
 const channelPrefix = {};
 
-module.exports.getChannelPrefix = () => {
+const getChannelPrefix = () => {
   return channelPrefix;
 };
-module.exports.updateCache = (channelName, newPrefix) => {
+
+const updateCache = (channelName, newPrefix) => {
   channelPrefix[channelName] = newPrefix;
 };
 
-module.exports.loadPrefixes = async () => {
+const loadPrefixes = async () => {
   const channelName = process.env.CHANNEL_NAME.toLowerCase();
   try {
     const result = await commandPrefixSchema.findOne({ _id: channelName });
@@ -18,4 +19,10 @@ module.exports.loadPrefixes = async () => {
   } catch (err) {
     console.log(err);
   }
+};
+
+module.exports = {
+  getChannelPrefix,
+  updateCache,
+  loadPrefixes,
 };

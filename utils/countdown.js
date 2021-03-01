@@ -5,7 +5,7 @@ let cd = {
 const countdown = (client, channel, seconds) => {
   let interval = setInterval(() => {
     if (seconds == 0) {
-      client.say(channel, `/me Go! kellee1GG`);
+      client.say(channel, `/me Go!`);
       client.say(channel, `/color HotPink`);
       clearInterval(interval);
       cd.cdStarted = false;
@@ -22,7 +22,7 @@ const countdown = (client, channel, seconds) => {
   }, 1000);
 };
 
-const countdownTeams = (client, channel, color) => {
+const countdownTeams = (client, channel, duration, color) => {
   if (color.toLowerCase() === "r") {
     client.say(channel, `/color Firebrick`);
     client.say(channel, `/me Team Battle: Red Team`);
@@ -36,7 +36,7 @@ const countdownTeams = (client, channel, color) => {
     client.say(channel, `/color SpringGreen`);
     client.say(channel, `/me Team Battle: Green Team`);
   }
-  countdown(client, channel, 20);
+  countdown(client, channel, duration);
 };
 
 module.exports = {

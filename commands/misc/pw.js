@@ -1,10 +1,10 @@
 module.exports = {
-  commands: "pw",
+  name: "pw",
+  category: "Misc",
   description: "Tetris password lobby password.",
   cooldown: 15,
-  includeInCommands: false,
-  callback: (client, channel) => {
-    client.say(channel, `/me Password: 108523`);
-    return;
+  globalCooldown: true,
+  execute: ({ client, channel }) => {
+    return client.say(channel, `/me Password: 108523`);
   },
 };

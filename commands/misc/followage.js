@@ -1,28 +1,30 @@
 const fetch = require("node-fetch");
-const constants = require("@utils/constants");
+const { replaceChars } = require("@utils/functions");
+const { log } = require("@utils/utils");
+
 module.exports = {
-  commands: "followage",
+  name: "followage",
+  category: "Misc",
   description: "Tells you how long you've been following KelleeLuna for.",
   cooldown: 15,
-  callback: (client, channel, message, userstate) => {
+  globalCooldown: false,
+  execute: ({ client, channel, userstate }) => {
     fetch(
       `https://beta.decapi.me/twitch/followage/${process.env.CHANNEL_NAME}/${userstate.username}?precision=7`
     )
       .then((resp) => resp.text())
       .then((data) => {
-        if (constants.replaceChars(data) === "a user cannot follow themself") {
-          client.say(channel, `/me ${data}`);
-          return;
-        } else {
-          client.say(
-            channel,
-            `/me ${userstate.username} has been following ${process.env.CHANNEL_NAME} for ${data}.`
-          );
-          return;
+        if (replaceChars(data) === "a user cannot follow themself") {
+          return client.say(channel, `/me ${data}`);
         }
+
+        return client.say(
+          channel,
+          `/me ${userstate.username} has been following ${process.env.CHANNEL_NAME} for ${data}.`
+        );
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((e) => {
+        log("ERROR", "./command/misc/followage.js", e.message);
       });
   },
 };

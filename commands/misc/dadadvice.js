@@ -1,17 +1,20 @@
 const fetch = require("node-fetch");
+const { log } = require("@utils/utils");
+
 module.exports = {
-  commands: "dadadvice",
+  name: "dadadvice",
+  category: "Misc",
   description: "KelleeBot gives you a random dad advice.",
   cooldown: 15,
-  callback: (client, channel) => {
+  globalCooldown: false,
+  execute: ({ client, channel }) => {
     fetch(`https://api.adviceslip.com/advice`) //`https://api.scorpstuff.com/advice.php`)
-      .then((response) => response.json())
+      .then((resp) => resp.json())
       .then((data) => {
-        client.say(channel, `/me ${data["slip"]["advice"]}`);
-        return;
+        return client.say(channel, `/me ${data["slip"]["advice"]}`);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((e) => {
+        log("ERROR", "./command/misc/dadadvice.js", e.message);
       });
   },
 };

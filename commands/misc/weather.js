@@ -2,16 +2,17 @@ const weather = require("weather-js");
 const { convert } = require("convert");
 
 module.exports = {
-  commands: "weather",
+  name: "weather",
+  category: "Misc",
   description: "Tells you KelleeLuna's current weather.",
   cooldown: 15,
-  callback: (client, channel) => {
+  globalCooldown: true,
+  execute: ({ client, channel }) => {
     weather.find(
       { search: "New York City, NY", degreeType: "C" },
       (err, result) => {
         if (err) {
-          console.log(err);
-          return;
+          return console.log(err);
         }
 
         if (!result) {
@@ -41,7 +42,7 @@ module.exports = {
 
         const text = `Weather for ${location.name}: ${current.skytext} with a temperature of ${current.temperature}°C (${fahrenheit}°F). Wind is blowing from the ${direction} at ${current.windspeed} (${miles} m/h) and the humidity is ${current.humidity}%.`;
 
-        client.say(channel, `/me ${text}`);
+        return client.say(channel, `/me ${text}`);
       }
     );
   },

@@ -46,6 +46,10 @@ const mongoose = require("mongoose");
     client.connect();
 
     client.commands = new Map();
+    client.categories = new Map();
+    client.channelInfoCache = new Map();
+    client.channelCooldowns = new Map();
+    client.globalCooldowns = new Map();
 
     await registerEvents(client, "../events");
     await registerCommands(client, "../commands");

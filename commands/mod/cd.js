@@ -1,51 +1,48 @@
-const constants = require("@utils/constants");
-const countdown = require("@utils/countdown");
+const { countdown, countdownTeams, cd } = require("@utils/countdown");
+
 module.exports = {
-  commands: "cd",
-  minArgs: 0,
-  maxArgs: 1,
+  name: "cd",
+  aliases: ["countdown"],
+  category: "Mod",
   description: "Starts a countdown in chat.",
   isModOnly: true,
-  callback: (client, channel, message, userstate, args) => {
-    //if (userstate.mod || constants.isBroadcaster(userstate.username)) {
-    if (!countdown.cd.cdStarted) {
-      if (!args.length) {
-        countdown.cd.cdStarted = true;
-        countdown.countdown(client, channel, 6);
-        return;
-      }
-
-      if (!args.startsWith("20") && args !== "10") return;
-
-      if (args.toLowerCase().startsWith("20")) {
-        const color = args.slice(2);
-        if (!color) {
-          countdown.cd.cdStarted = true;
-          countdown.countdown(client, channel, 20);
-          return;
-        }
-
-        if (color === "r" || color === "y" || color === "b" || color === "g") {
-          countdown.cd.cdStarted = true;
-          countdown.countdownTeams(client, channel, color);
-        } else {
-          client.say(channel, `/me Unknown team color`);
-          return;
-        }
-      }
-
-      if (args.toLowerCase() === "10") {
-        countdown.cd.cdStarted = true;
-        countdown.countdown(client, channel, 10);
-        return;
-      }
-    } else {
-      client.say(
+  execute: async ({ client, channel, text }) => {
+    if (cd.cdStarted) {
+      return client.say(
         channel,
         `/me I can only do one countdown at a time kellee1Glare`
       );
-      return;
     }
-    //}
+
+    if (!text.length) {
+      cd.cdStarted = true;
+      return countdown(client, channel, 6);
+    }
+
+    let duration = text;
+    if (duration.length == 2) {
+      if (isNaN(duration)) return;
+
+      duration = parseInt(duration);
+      if (duration == 20 || duration == 10) {
+        cd.cdStarted = true;
+        return countdown(client, channel, duration);
+      }
+    }
+
+    if (duration.length == 3) {
+      const color = duration.slice(2).toLowerCase();
+      duration = duration.substr(0, 2);
+
+      if (isNaN(duration)) return;
+
+      if (color === "r" || color === "y" || color === "b" || color === "g") {
+        cd.cdStarted = true;
+
+        countdownTeams(client, channel, duration, color);
+      } else {
+        return client.say(channel, `/me Unknown color.`);
+      }
+    }
   },
 };

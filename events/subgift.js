@@ -11,16 +11,14 @@ module.exports = (
     userstate["msg-param-recipient-display-name"].toLowerCase() ===
     process.env.BOT_USERNAME.toLowerCase()
   ) {
-    client.say(
+    return client.say(
       channel,
       `/me Thank you @${username} for gifting a sub to me. I really appreciate it. kellee1Love`
     );
-    return;
-  } else {
-    client.say(
-      channel,
-      `/me Thank you @${username} for gifting a sub to ${userstate["msg-param-recipient-display-name"]}! PogChamp`
-    );
-    return;
   }
+  
+  return client.say(
+    channel,
+    `/me Thank you @${username} for gifting a sub to ${userstate["msg-param-recipient-display-name"]}! PogChamp`
+  );
 };

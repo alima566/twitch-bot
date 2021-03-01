@@ -1,43 +1,59 @@
-const constants = require("@utils/constants");
+const { replaceChars } = require("@utils/functions");
+
 const aaronBanResponses = [
   "iaraaron is awesome and cannot be banned. Try someone else, <username>.",
   "Nice try, he is unbannable. Kappa",
   "<username> just got banned for trying to ban iaraaron. Get rekt son.",
 ];
+
 module.exports = {
-  commands: "ban",
-  expectedArgs: "<The person to ban>",
-  minArgs: 1,
+  name: "ban",
+  category: "Misc",
   description: "Bans a user",
   cooldown: 15,
-  callback: (client, channel, message, userstate, args) => {
-    const user = args.startsWith("@") ? args.replace("@", "") : args;
-    if (user.toLowerCase() === process.env.BOT_USERNAME.toLowerCase()) {
-      client.say(channel, `/me Nice try, you can't ban me. Kappa`);
-      return;
-    } else if (
-      user.toLowerCase() === "iaraaron" ||
-      constants.replaceChars(user) === "aaron"
-    ) {
-      let index = constants.getRandomElement(aaronBanResponses);
-      let response = aaronBanResponses[index].replace(
-        "<username>",
-        userstate.username
-      );
-      client.say(channel, `/me ${response}`);
-      return;
-    } else if (user.toLowerCase() === process.env.CHANNEL_NAME.toLowerCase()) {
-      client.say(channel, `/me Nice try, you can't ban the streamer. Kappa`);
-      return;
-    } else if (user.toLowerCase().includes(userstate.username.toLowerCase())) {
-      client.say(
+  globalCooldown: false,
+  execute: ({ client, channel, userstate, args }) => {
+    if (args.length === 0) {
+      return client.say(
         channel,
         `/me ${user} just banned themselves from the channel! Get rekt son.`
       );
-      return;
-    } else {
-      client.say(channel, `/me ${user} has been banned, get outta here!`);
-      return;
     }
+
+    let user = args[0].startsWith("@")
+      ? args[0].replace("@", "").toLowerCase()
+      : args[0].toLowerCase();
+
+    if (user === process.env.BOT_USERNAME.toLowerCase()) {
+      return client.say(channel, `/me Nice try, but you can't ban me. Kappa`);
+    }
+
+    if (user === "iaraaron" || replaceChars(user) === "aaron") {
+      const index = getRandomElement(aaronBanResponses);
+      const response = aaronBanResponses[index].replace(
+        "<username>",
+        userstate.username
+      );
+      return client.say(channel, `/me ${response}`);
+    }
+
+    if (user === process.env.CHANNEL_NAME.toLowerCase()) {
+      return client.say(
+        channel,
+        `/me Nice try, but you can't ban the streamer. Kappa`
+      );
+    }
+
+    if (user.includes(userstate.username.toLowerCase())) {
+      return client.say(
+        channel,
+        `/me ${user} just banned themselves from the channel! Get rekt son.`
+      );
+    }
+
+    return client.say(
+      channel,
+      `/me ${user} has just been banned, get outta here!`
+    );
   },
 };

@@ -1,22 +1,31 @@
 const fetch = require("node-fetch");
+const { log } = require("@utils/utils");
+
 module.exports = {
-  commands: "uptime",
+  name: "uptime",
+  category: "Misc",
   description: "Tells you how long Kellee has been live for.",
   cooldown: 15,
-  callback: (client, channel) => {
-    fetch(`https://beta.decapi.me/twitch/uptime/${process.env.CHANNEL_NAME}`)
+  globalCooldown: true,
+  execute: ({ client, channel }) => {
+    fetch(
+      `https://beta.decapi.me/twitch/uptime/${encodeURIComponent(
+        channel.slice(1)
+      )}`
+    )
       .then((resp) => resp.text())
       .then((data) => {
         if (data.toLowerCase().includes("offline")) {
-          client.say(channel, `/me ${data}`);
-          return;
-        } else {
-          client.say(
-            channel,
-            `/me ${process.env.CHANNEL_NAME} has been live for ${data}.`
-          );
-          return;
+          return client.say(channel, `/me ${data}`);
         }
+
+        return client.say(
+          channel,
+          `/me ${channel.slice(1)} has been live for ${data}.`
+        );
+      })
+      .catch((e) => {
+        log("ERROR", "./commands/misc/uptime.js", e.message);
       });
   },
 };

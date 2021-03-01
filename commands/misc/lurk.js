@@ -1,4 +1,4 @@
-const constants = require("@utils/constants");
+const { getRandomElement } = require("@utils/functions");
 
 const lurk = [
   "<username> has entered lurk mode! Enjoy your lurk.",
@@ -8,13 +8,14 @@ const lurk = [
 ];
 
 module.exports = {
-  commands: "lurk",
+  name: "lurk",
+  category: "Misc",
   description: "Tells the chat you are entering lurk mode.",
   cooldown: 15,
-  callback: (client, channel, message, userstate) => {
-    const index = constants.getRandomElement(lurk);
-    var response = lurk[index].replace("<username>", userstate.username);
-    client.say(channel, `/me ${response}`);
-    return;
+  globalCooldown: false,
+  execute: ({ client, channel, userstate }) => {
+    const index = getRandomElement(lurk);
+    const response = lurk[index].replace(/<username>/g, userstate.username);
+    return client.say(channel, `/me ${response}`);
   },
 };

@@ -1,8 +1,10 @@
 module.exports = {
-  commands: "socials",
+  name: "socials",
+  category: "Misc",
   description: "Links you to Kellee's Twitter account and YouTube channel.",
   cooldown: 15,
-  callback: (client, channel) => {
+  globalCooldown: true,
+  execute: ({ client, channel }) => {
     client.say(
       channel,
       `/me Follow me on Twitter! https://twitter.com/kelleelune`
@@ -13,7 +15,7 @@ module.exports = {
     );
     client.say(
       channel,
-      `/me I also have an instagram account where I post about Animal Crossing a lot! https://www.instagram.com/kelleelune/ `
+      `/me I also have an Instagram account where I post about Animal Crossing a lot! https://www.instagram.com/kelleelune/ `
     );
     return;
   },

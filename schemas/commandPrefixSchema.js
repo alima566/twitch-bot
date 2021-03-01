@@ -11,7 +11,4 @@ const commandPrefixSchema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model(
-  "channel-command-prefixes",
-  commandPrefixSchema
-);
+module.exports = mongoose.model("channel-prefixes", commandPrefixSchema);

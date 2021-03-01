@@ -1,22 +1,26 @@
 const userPokemonsSchema = require("@schemas/userPokemonsSchema");
+const { log } = require("@utils/utils");
 
 module.exports = {
-  commands: "pokemons",
+  name: "pokemon",
+  category: "Misc",
   description: "Tells you what Pokémons you have caught.",
   cooldown: 15,
-  callback: async (client, channel, message, userstate, args) => {
+  globalCooldown: false,
+  execute: async ({ client, channel, userstate }) => {
     const obj = {
       channel: channel.slice(1),
       user: userstate.username.toLowerCase(),
     };
+    try {
+      const result = await userPokemonsSchema.find(obj);
+      if (!result.length) {
+        return client.say(
+          channel,
+          `/me ${userstate.username}, you have not caught any Pokémon's yet.`
+        );
+      }
 
-    const result = await userPokemonsSchema.find(obj);
-    if (!result.length) {
-      return client.say(
-        channel,
-        `/me ${userstate.username}, you have not caught any Pokémon's yet.`
-      );
-    } else {
       const totalPokemons = result[0].pokemons.name.length;
       const pokemons = result[0].pokemons.name
         .map((m) => m)
@@ -30,6 +34,12 @@ module.exports = {
         }, you have caught a total of ${totalPokemons} Pokémon${
           totalPokemons !== 1 ? "s" : ""
         }! Here is your Pokédex: ${pokemons}.`
+      );
+    } catch (e) {
+      log("ERROR", "./commands/misc/pokemon.js", e.message);
+      return client.say(
+        channel,
+        `/me An error has occurred. Please try again.`
       );
     }
   },

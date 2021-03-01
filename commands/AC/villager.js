@@ -1,17 +1,39 @@
 const fetch = require("node-fetch");
+const { log } = require("@utils/utils");
+
 module.exports = {
-  commands: "villager",
-  minArgs: 1,
-  expectedArgs: "<villager_name>",
+  name: "villager",
+  category: "AC",
   description: "Retrieves information about the specified AC villager.",
   cooldown: 15,
-  callback: (client, channel, message, userstate, args) => {
-    let query = args;
-    if (query.includes(" ")) {
-      query = query.replace(/ +/g, "_");
+  globalCooldown: false,
+  args: [
+    {
+      type: "SOMETHING",
+      prompt: "Please provide a villager name to find.",
+      min: 1,
+      id: "villager",
+    },
+  ],
+  execute: ({ client, channel, text }) => {
+    const channelName = channel.slice(1);
+    const channelInfo = client.channelInfoCache.get(channelName);
+
+    if (text.length === 0) {
+      return client.say(
+        channel,
+        `/me Usage: ${channelInfo.prefix}villager <villager name>`
+      );
     }
+
+    if (text.includes(" ")) {
+      text = text.replace(/ +/g, "_");
+    }
+
     fetch(
-      `https://api.nookipedia.com/villagers?name=${query.toLowerCase()}&nhdetails=true`,
+      `https://api.nookipedia.com/villagers?name=${encodeURIComponent(
+        text.toLowerCase()
+      )}&nhdetails=true`,
       {
         method: "GET",
         headers: {
@@ -31,9 +53,12 @@ module.exports = {
           }! More info: ${data[0].url}`
         );
       })
-      .catch((err) => {
-        client.say(channel, `/me I couldn't find that villager kellee1Cry`);
-        console.log(err);
+      .catch((e) => {
+        log("ERROR", "./commands/AC/villager.js", e.message);
+        return client.say(
+          channel,
+          `/me I couldn't find that villager kellee1Cry`
+        );
       });
   },
 };

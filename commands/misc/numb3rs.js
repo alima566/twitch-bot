@@ -1,24 +1,27 @@
 const fetch = require("node-fetch");
 const numeral = require("numeral");
-const constants = require("@utils/constants");
+const { getRandomElement } = require("@utils/functions");
+const { log } = require("@utils/utils");
+
 module.exports = {
-  commands: ["numb3rs", "numbers"],
+  name: "numb3rs",
+  category: "Misc",
   description: "KelleeBot tells you a random number fact.",
   cooldown: 15,
-  callback: (client, channel) => {
+  globalCooldown: false,
+  execute: ({ client, channel }) => {
     const numAPI = ["trivia", "math"];
-    const index = constants.getRandomElement(numAPI);
+    const index = getRandomElement(numAPI);
     const api = numAPI[index];
-    fetch(`http://numbersapi.com/random/${api}`)
-      .then((response) => response.text())
+    fetch(`http://numbersapi.com/random/${encodeURIComponent(api)}`)
+      .then((resp) => resp.text())
       .then((data) => {
         const num = data.match(/\d+/g);
         const formattedNum = numeral(num[0]).format("0,0");
-        client.say(channel, `/me ${data.replace(num[0], formattedNum)}`);
-        return;
+        return client.say(channel, `/me ${data.replace(num[0], formattedNum)}`);
       })
-      .catch((data) => {
-        console.log(data);
+      .catch((e) => {
+        log("ERROR", "./commands/misc/numb3rs.js", e.message);
       });
   },
 };

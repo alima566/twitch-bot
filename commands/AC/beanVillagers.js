@@ -12,14 +12,15 @@ const villagers = [
 ];
 
 module.exports = {
-  commands: "beanvillagers",
+  name: "beanvillagers",
+  category: "AC",
   description: "Lists out all of Bean's current villagers.",
   cooldown: 15,
-  callback: (client, channel) => {
-    client.say(
+  globalCooldown: true,
+  execute: ({ client, channel }) => {
+    return client.say(
       channel,
       `/me Bean island's villagers are: ${villagers.sort().join(", ")}`
     );
-    return;
   },
 };

@@ -1,28 +1,31 @@
 const fetch = require("node-fetch");
-const constants = require("@utils/constants");
+const { replaceChars } = require("@utils/functions");
+const { log } = require("@utils/utils");
+
 module.exports = {
-  commands: "followedon",
+  name: "followedon",
+  category: "Misc",
   description: "Tells you when you started following KelleeLuna.",
   cooldown: 15,
-  callback: (client, channel, message, userstate) => {
+  execute: ({ client, channel, userstate }) => {
     fetch(
       `https://beta.decapi.me/twitch/followed/${process.env.CHANNEL_NAME}/${
         userstate.username
       }?tz=America/New_York&format=${encodeURIComponent("d/m/Y g:i:s A T")}`
     )
-      .then((response) => response.text())
+      .then((resp) => resp.text())
       .then((data) => {
-        if (constants.replaceChars(data) === "a user cannot follow themself") {
-          client.say(channel, `/me ${data}`);
-        } else {
-          client.say(
-            channel,
-            `/me ${userstate.username} followed ${process.env.CHANNEL_NAME} on ${data}.`
-          );
+        if (replaceChars(data) === "a user cannot follow themself") {
+          return client.say(channel, `/me ${data}`);
         }
+
+        return client.say(
+          channel,
+          `/me ${userstate.username} followed ${process.env.CHANNEL_NAME} on ${data}.`
+        );
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((e) => {
+        log("ERROR", "./command/misc/followedon.js", e.message);
       });
   },
 };

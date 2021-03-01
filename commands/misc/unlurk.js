@@ -1,4 +1,4 @@
-const constants = require("@utils/constants");
+const { getRandomElement } = require("@utils/functions");
 
 const unlurk = [
   "Welcome back from your lurk <username>! Great to see you again!",
@@ -7,13 +7,13 @@ const unlurk = [
 ];
 
 module.exports = {
-  commands: "unlurk",
+  name: "unlurk",
+  category: "Misc",
   description: "Tells the chat you have returned from your lurk.",
   cooldown: 15,
-  callback: (client, channel, message, userstate) => {
-    const index = constants.getRandomElement(unlurk);
-    var response = unlurk[index].replace("<username>", userstate.username);
-    client.say(channel, `/me ${response}`);
-    return;
+  execute: ({ client, channel, userstate }) => {
+    const index = getRandomElement(unlurk);
+    const response = unlurk[index].replace(/<username>/g, userstate.username);
+    return client.say(channel, `/me ${response}`);
   },
 };

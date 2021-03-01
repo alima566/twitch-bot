@@ -1,92 +1,135 @@
+const {
+  processArguments,
+  log,
+  getCooldown,
+  msToTime,
+} = require("@utils/utils");
+const { isBroadcaster } = require("@utils/functions");
+const { getChannelPrefix } = require("@utils/channelPrefix");
 const { PREFIX } = require("@root/config.json");
-const channelPrefix = require("@utils/channelPrefix");
-const constants = require("@utils/constants");
 
-let recentlyRan = [];
-module.exports = (client, channel, userstate, message, self) => {
-  if (self) return;
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-  checkTwitchChat(client, userstate, message, channel);
+module.exports = async (client, channel, userstate, message, self) => {
+  try {
+    if (self) return;
 
-  const prefix = channelPrefix.getChannelPrefix()[channel.slice(1)] || PREFIX;
-  //if (!message.startsWith(prefix)) return;
+    checkTwitchChat(userstate, message, channel);
 
-  const cmdArgs = message.substring(message.indexOf(prefix) + 1).split(/[ ]+/);
-  const cmdName = cmdArgs.shift().toLowerCase();
+    if (message === "kellee1Glare") {
+      return client.say(
+        channel,
+        `kellee1Glare kellee1Glare kellee1Glare kellee1Glare kellee1Glare kellee1Glare kellee1Glare kellee1Glare kellee1Glare kellee1Glare kellee1Glare kellee1Glare kellee1Glare kellee1Glare kellee1Glare`
+      );
+    }
 
-  if (client.commands.get(cmdName)) {
-    let {
-      commands,
-      expectedArgs = "",
-      minArgs = 0,
-      maxArgs = null,
-      cooldown = -1,
-      isModOnly = false,
-      callback,
-    } = client.commands.get(cmdName);
+    let channelInfo = {
+      channelName: channel.slice(1),
+      prefix: PREFIX,
+      disabledCommands: [Array],
+    };
+
+    client.channelInfoCache.set(channel.slice(1), channelInfo);
+
+    const prefix = getChannelPrefix()[channel.slice(1)] || PREFIX;
+    const prefixRegex = new RegExp(`^(${escapeRegex(prefix)})\\s*`);
+    if (!prefixRegex.test(message)) return;
+
+    const [, matchedPrefix] = message.match(prefixRegex);
+    let msgArgs = message.slice(matchedPrefix.length).trim().split(/ +/);
+    let cmdName = msgArgs.shift().toLowerCase();
+
+    const command =
+      client.commands.get(cmdName) ||
+      (channelInfo.commandAlias
+        ? client.commands.get(channelInfo.commandAlias[cmdName])
+        : false);
+
+    if (!command) return;
 
     if (
       !userstate.mod &&
-      !constants.isBroadcaster(userstate.username) &&
-      isModOnly
-    )
+      !isBroadcaster(userstate.username) &&
+      command.isModOnly &&
+      userstate.username.toLowerCase() !== "iaraaron"
+    ) {
+      return;
+    }
+
+    if (command.devOnly && !devs.includes(userstate.username.toLowerCase()))
       return;
 
-    if (typeof commands === "string") {
-      commands = [commands];
-    }
+    const cd = getCooldown(client, command, channel);
 
-    for (const alias of commands) {
-      let command =
-        alias.toLowerCase() === "kellee1glare" || alias.toLowerCase() === "uwu"
-          ? `${alias.toLowerCase()}`
-          : `${prefix}${alias.toLowerCase()}`;
-
+    let cooldowns;
+    if (cd) {
       if (
-        message.toLowerCase().startsWith(`${command} `) ||
-        message.toLowerCase() === command ||
-        message.toLowerCase().includes(command)
+        typeof command.globalCooldown === "undefined" ||
+        command.globalCooldown
       ) {
-        let cooldownString = `${channel.slice(1)}-${userstate["user-id"]}-${
-          commands[0]
-        }`;
-        if (cooldown > 0 && recentlyRan.includes(cooldownString)) {
-          console.log(
-            `Command ${command} on cooldown for ${userstate.username}`
-          );
-          return;
+        if (!client.globalCooldowns.has(command.name)) {
+          client.globalCooldowns.set(command.name, new Map());
         }
-
-        const args = message.split(/[ ]+/);
-        args.shift();
-
-        if (
-          args.length < minArgs ||
-          (maxArgs !== null && args.length > maxArgs)
-        ) {
-          client.say(channel, `/me Usage: ${prefix}${alias} ${expectedArgs}`);
-          return;
+        cooldowns = client.globalCooldowns;
+      } else {
+        if (!client.channelCooldowns.has(channel.slice(1))) {
+          client.channelCooldowns.set(channel.slice(1), new Map());
         }
-
-        if (cooldown > 0) {
-          recentlyRan.push(cooldownString);
-          setTimeout(() => {
-            recentlyRan = recentlyRan.filter((string) => {
-              return string !== cooldownString;
-            });
-          }, 1000 * cooldown);
+        cooldowns = client.channelCooldowns.get(channel.slice(1));
+        if (!cooldowns.has(command.name)) {
+          cooldowns.set(command.name, new Map());
         }
-
-        callback(client, channel, message, userstate, args.join(" "));
-        return;
       }
+
+      const now = Date.now();
+      const timestamps = cooldowns.get(command.name);
+      const cooldownAmount = cd * 1000;
+      if (timestamps.has(`${userstate["user-id"]}-${channel.slice(1)}`)) {
+        const expirationTime =
+          timestamps.get(`${userstate["user-id"]}-${channel.slice(1)}`) +
+          cooldownAmount;
+        if (now < expirationTime)
+          return console.log(
+            `Command on cooldown. Cooldown expires in ${msToTime(
+              expirationTime - now
+            )}`
+          );
+      }
+
+      timestamps.set(`${userstate["user-id"]}-${channel.slice(1)}`, now);
+      setTimeout(
+        () => timestamps.delete(`${userstate["user-id"]}-${channel.slice(1)}`),
+        cooldownAmount
+      );
     }
+
+    let flags;
+    if (command.args) {
+      flags = processArguments(message, msgArgs, command.args);
+    }
+    if (flags && flags.invalid) {
+      if (flags.prompt) {
+        return client.say(channel, `/me ${flags.prompt}`);
+      }
+      return;
+    }
+
+    command.execute({
+      client: client,
+      channel: channel,
+      userstate: userstate,
+      message: message,
+      args: msgArgs,
+      text: msgArgs.join(" "),
+      flags: flags,
+    });
+  } catch (e) {
+    log("ERROR", "./events/message.js", e.message);
   }
 };
 
-const checkTwitchChat = (client, userstate, message, channel) => {
-  console.log(message);
-  if (userstate.mod || constants.isBroadcaster(userstate.username)) return;
+const checkTwitchChat = (userstate, message, channel) => {
+  if (userstate.mod || isBroadcaster(userstate.username, channel)) return;
 
   if (message.length > 250) {
     client
@@ -98,7 +141,7 @@ const checkTwitchChat = (client, userstate, message, channel) => {
         );
       })
       .catch((e) => {
-        console.log(e.message);
+        log("ERROR", "./events/message.js", e.message);
       });
   }
 
@@ -114,8 +157,8 @@ const checkTwitchChat = (client, userstate, message, channel) => {
       .then((data) => {
         client.say(channel, `/me No, I don't wanna become famous. Good bye!`);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((e) => {
+        log("ERROR", "./events/message.js", e.message);
       });
   } else if (
     message ===
@@ -129,8 +172,8 @@ const checkTwitchChat = (client, userstate, message, channel) => {
           `/me No, I don't want a boost on Twitch. Get outta here!`
         );
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((e) => {
+        log("ERROR", "./events/message.js", e.message);
       });
   }
 };

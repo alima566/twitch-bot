@@ -1,26 +1,35 @@
-const comp = require("@utils/compliments");
-const constants = require("@utils/constants");
+const { getRandomElement } = require("@utils/functions");
+const { COMPLIMENTS } = require("@utils/compliments");
+
 module.exports = {
-  commands: "ty",
-  minArgs: 0,
-  description: "KelleeBot gives you or another user a random compliment.",
+  name: "ty",
+  category: "Misc",
+  description: "Thanks/compliments a viewer in chat.",
   cooldown: 15,
-  callback: (client, channel, message, userstate, args) => {
-    var index = constants.getRandomElement(comp.COMPLIMENTS);
-    var compliment = comp.COMPLIMENTS[index];
+  globalCooldown: false,
+  execute: ({ client, channel, args, userstate }) => {
+    const index = getRandomElement(COMPLIMENTS);
     if (args.length === 0) {
-      client.say(
+      return client.say(
         channel,
-        `/me ${compliment.replace("<user>", userstate.username)} KPOPheart`
+        `/me ${COMPLIMENTS[index].replace(
+          "<user>",
+          userstate.username
+        )} KPOPheart`
       );
-      return;
-    } else {
-      const user = args.startsWith("@") ? args.replace("@", "") : args;
-      client.say(
-        channel,
-        `/me ${compliment.replace("<user>", user)} KPOPheart`
-      );
-      return;
     }
+
+    let user = args[0].startsWith("@") ? args[0].replace("@", "") : args[0];
+    if (user.toLowerCase() === process.env.BOT_USERNAME.toLowerCase()) {
+      return client.say(
+        channel,
+        `/me You better thank me. It's a lot of work being a bot on here.`
+      );
+    }
+
+    return client.say(
+      channel,
+      `/me ${COMPLIMENTS[index].replace("<user>", user)} KPOPheart`
+    );
   },
 };

@@ -1,6 +1,7 @@
-const { getRandomElement } = require("@utils/constants");
-const fetch = require("node-fetch");
+const { getRandomElement } = require("@utils/functions");
 const userPokemonsSchema = require("@schemas/userPokemonsSchema");
+const { log } = require("@utils/utils");
+const fetch = require("node-fetch");
 
 const pokeBalls = [
   "Master Ball",
@@ -13,34 +14,30 @@ const pokeBalls = [
 ];
 
 module.exports = {
-  commands: "redeemPokemon",
-  minArgs: 1,
-  expectedArgs: "<User's @>",
-  description: "Catch a pokemon.",
+  name: "redeempokemon",
+  aliases: ["catch"],
+  category: "Mod",
+  description: "Catches a Pokemon.",
+  cooldown: 15,
+  globalCooldown: true,
   isModOnly: true,
-  callback: async (client, channel, message, userstate, args) => {
-    const user = args.startsWith("@")
-      ? args.replace("@", "").toLowerCase().trim()
-      : args.toLowerCase().trim();
+  execute: async ({ client, channel, args }) => {
+    if (args.length === 0) {
+      return client.say(channel, `/me Please specify a user.`);
+    }
+
+    let user = args[0].startsWith("@")
+      ? args[0].replace("@", "").toLowerCase().trim()
+      : args[0].toLowerCase().trim();
     const index = getRandomElement(pokeBalls);
     const pokedexNum = Math.floor(Math.random() * 899);
+    const pokeBall = pokeBalls[index];
     const pokemon = await getRandomPokemon(pokedexNum);
-    const pokeball = pokeBalls[index];
 
     const obj = {
       channel: channel.slice(1),
       user,
     };
-
-    const result = await userPokemonsSchema.findOne(obj);
-    if (result) {
-      if (alreadyCaught(result.pokemons, pokemon)) {
-        return client.say(
-          channel,
-          `/me ${user} has caught a ${pokemon}! However, they already have one so they release it back into the wild!`
-        );
-      }
-    }
 
     await userPokemonsSchema.findOneAndUpdate(
       obj,
@@ -50,7 +47,7 @@ module.exports = {
           pokemons: {
             pokedexNum,
             name: pokemon,
-            caughtWith: pokeball,
+            caughtWith: pokeBall,
             caughtOn: new Date(),
           },
         },
@@ -64,37 +61,29 @@ module.exports = {
     const { pokemons } = numPokemons;
     return client.say(
       channel,
-      `/me ${user} has captured a ${pokemon} by using a ${pokeball}! PridePog PridePog Hope you take good care of your Pokémon! 2020Rivalry You have now caught a total of ${
+      `/me ${user} has captured a ${pokemon} by using a ${pokeBall}! PridePog PridePog Hope you take good care of your Pokémon! 2020Rivalry You have now caught a total of ${
         pokemons.name.length
       } Pokémon${pokemons.name.length !== 1 ? "s" : ""}!`
     );
   },
 };
 
-const getRandomPokemon = (pokedexNumber) => {
+const getRandomPokemon = async (pokedexNum) => {
   return new Promise(async (resolve, reject) => {
     try {
       const body = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/${pokedexNumber}`
+        `https://pokeapi.co/api/v2/pokemon/${encodeURIComponent(pokedexNum)}`
       );
       const result = await body.json();
       const pokemon = capFirstLetter(result.species.name);
       resolve(pokemon);
     } catch (e) {
-      reject("An error has occurred. Please try again.");
+      log("ERROR", "./commands/mod/redeempokemon.js", e.message);
+      reject(e);
     }
   });
 };
 
-const capFirstLetter = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-};
-
-const alreadyCaught = (results, pokemon) => {
-  for (const name of results.name) {
-    if (name === pokemon) {
-      return true;
-    }
-  }
-  return false;
+const capFirstLetter = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };

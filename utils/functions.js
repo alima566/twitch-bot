@@ -1,14 +1,20 @@
-module.exports.replaceChars = (string) => {
+const replaceChars = (string) => {
   return string
     .toLowerCase()
     .replace(/[.,\/#!$%\^&\*;:{}=\-_'""`~()]/g, "")
     .replace(/\s{2,}/g, " ");
 };
 
-module.exports.isBroadcaster = (user) => {
+const isBroadcaster = (user) => {
   return user.toLowerCase() === process.env.CHANNEL_NAME.toLowerCase();
 };
 
-module.exports.getRandomElement = (array) => {
+const getRandomElement = (array) => {
   return Math.floor(Math.random() * array.length);
+};
+
+module.exports = {
+  replaceChars,
+  isBroadcaster,
+  getRandomElement,
 };

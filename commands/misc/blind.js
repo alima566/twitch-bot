@@ -1,15 +1,18 @@
 const fetch = require("node-fetch");
+const { log } = require("@utils/utils");
 
 module.exports = {
-  commands: "blind",
+  name: "blind",
+  category: "Misc",
   description:
     "Tells viewers that Kellee is doing a blind run-through of the game.",
   cooldown: 15,
-  callback: async (client, channel) => {
+  globalCooldown: true,
+  execute: async ({ client, channel }) => {
     const game = await getGame(channel);
     return client.say(
       channel,
-      `/me Kellee is doing a blind playthrough of ${game}! We ask that you PLEASE don't give Kellee hints, tips, tricks, or spoilers whatsoever unless asked and let her figure stuff out on her own! Thank you!`
+      `/me Kellee is doing a blind playthrough of ${game}! We ask that you PLEASE don't give Kellee any hints, tips, tricks, or spoilers whatsoever unless asked and let her figure stuff out on her own! Thank you!`
     );
   },
 };
@@ -27,7 +30,7 @@ const getGame = (channel) => {
         reject("There was a problem retrieving game data.");
       }
     } catch (e) {
-      console.log(e);
+      log("ERROR", "./command/misc/blind.js", e.message);
     }
   });
 };

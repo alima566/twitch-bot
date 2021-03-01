@@ -1,4 +1,4 @@
-const constants = require("@utils/constants");
+const { replaceChars, getRandomElement } = require("@utils/functions");
 
 const aaronHugResponses = [
   "iaraaron runs away because <username> just tried to hug him! No hugging iaraaron allowed! kellee1Glare",
@@ -22,14 +22,12 @@ const nightbotHugResponses = [
 ];
 
 module.exports = {
-  commands: "hug",
-  minArgs: 0,
+  name: "hug",
+  category: "Misc",
   description: "Hugs another user",
   cooldown: 15,
-  callback: (client, channel, message, userstate, args) => {
-    const user = args.startsWith("@")
-      ? args.replace("@", "").trim()
-      : args.trim();
+  globalCooldown: false,
+  execute: ({ client, channel, userstate, args }) => {
     if (args.length === 0) {
       client.say(
         channel,
@@ -38,66 +36,49 @@ module.exports = {
       return;
     }
 
+    let user = args[0].startsWith("@")
+      ? args[0].replace("@", "").toLowerCase().trim()
+      : args[0].toLowerCase().trim();
+
     if (
       (userstate.username.toLowerCase() === "kelleeluna" ||
         userstate.username.toLowerCase() === "pineappleontilt") &&
-      user.toLowerCase() === "iaraaron"
+      user === "iaraaron"
     ) {
-      client.say(
+      return client.say(
         channel,
         `/me ${userstate.username} gives ${user} a great big hug. I love you ʕっ•ᴥ•ʔっ kellee1Love`
       );
-      return;
     }
 
-    if (
-      user.toLowerCase() === "iaraaron" ||
-      constants.replaceChars(user).includes("aaron")
-    ) {
-      var index = constants.getRandomElement(aaronHugResponses);
-      var response = aaronHugResponses[index].replace(
-        "<username>",
+    if (user === "iaraaron" || replaceChars(user).includes("aaron")) {
+      const index = getRandomElement(aaronHugResponses);
+      const response = aaronHugResponses[index].replace(
+        /<username>/g,
         userstate.username
       );
-      client.say(channel, `/me ${response}`);
-      return;
+      return client.say(channel, `/me ${response}`);
     }
 
-    if (
-      userstate.username.toLowerCase() === user.toLowerCase() ||
-      user.toLowerCase() === "me"
-    ) {
-      client.say(
+    if (userstate.username.toLowerCase() === user || user === "me") {
+      return client.say(
         channel,
         `/me ${userstate.username} gives themselves a hug because they are lonely.`
       );
-      return;
     }
 
-    if (user.toLowerCase() === process.env.BOT_USERNAME.toLowerCase()) {
-      var index = constants.getRandomElement(kelleebotHugResponses);
-      var response = kelleebotHugResponses[index].replace(
-        "<username>",
+    if (user === process.env.BOT_USERNAME.toLowerCase()) {
+      const index = getRandomElement(kelleebotHugResponses);
+      const response = kelleebotHugResponses[index].replace(
+        /<username>/g,
         userstate.username
       );
-      client.say(channel, `/me ${response}`);
-      return;
+      return client.say(channel, `/me ${response}`);
     }
 
-    if (user.toLowerCase() === "nightbot") {
-      var index = constants.getRandomElement(nightbotHugResponses);
-      var response = nightbotHugResponses[index].replace(
-        "<username>",
-        userstate.username
-      );
-      client.say(channel, `/me ${response}`);
-      return;
-    }
-
-    client.say(
+    return client.say(
       channel,
       `/me kellee1Love ${userstate.username} hugs ${user} PrideFlower. I love you ʕっ•ᴥ•ʔっ kellee1Love`
     );
-    return;
   },
 };

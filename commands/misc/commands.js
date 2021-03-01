@@ -2,23 +2,23 @@ const { PREFIX } = require("@root/config.json");
 const channelPrefix = require("@utils/channelPrefix");
 
 module.exports = {
-  commands: "commands",
+  name: "commands",
+  category: "misc",
   description: "A list of all KelleeBot commands",
   cooldown: 15,
-  includeInCommands: false,
-  callback: async (client, channel) => {
-    const prefix = channelPrefix.getChannelPrefix()[channel.slice(1)] || PREFIX;
-    const data = [];
-    const { commands } = client;
-    for (const [key, value] of commands.entries()) {
+  globalCooldown: false,
+  execute: async ({ client, channel }) => {
+    const channelName = channel.slice(1);
+    const channelInfo = client.channelInfoCache.get(channelName);
+    let commands = [];
+    for (const [key, value] of client.commands.entries()) {
       if (
-        typeof value.includeInCommands === "undefined" &&
-        typeof value.isModOnly === "undefined"
+        value.category.toLowerCase() !== "mod" &&
+        value.name.toLowerCase() !== "commands"
       ) {
-        data.push(`${prefix}${key}`);
+        commands.push(`${channelInfo.prefix}${key}`);
       }
     }
-    client.say(channel, `/me ${data.sort().join(", ")}`);
-    return;
+    return client.say(channel, `/me ${commands.sort().join(", ")}`);
   },
 };
