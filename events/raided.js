@@ -4,7 +4,7 @@ const { log } = require("@utils/utils");
 module.exports = (client, channel, username, viewers) => {
   client.say(
     channel,
-    `/me Incoming raid! PogChamp Thank you @${username} for raiding the channel with ${viewers} viewer${
+    `/me Incoming raid! PrideRise Thank you @${username} for raiding the channel with ${viewers} viewer${
       viewers !== 1 ? "s" : ""
     }! Welcome raiders!`
   );

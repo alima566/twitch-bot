@@ -12,6 +12,6 @@ module.exports = (
     channel,
     `/me Thank you @${username} for the ${cumulativeMonths} month${
       cumulativeMonths != 1 ? "s" : ""
-    } sub! PogChamp`
+    } sub! PrideRise`
   );
 };
