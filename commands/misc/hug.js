@@ -31,14 +31,14 @@ module.exports = {
     if (args.length === 0) {
       client.say(
         channel,
-        `/me ${userstate.username} hugs themselves because they didn't specify who to hug.`
+        `/me ${userstate["display-name"]} hugs themselves because they didn't specify who to hug.`
       );
       return;
     }
 
     let user = args[0].startsWith("@")
-      ? args[0].replace("@", "").toLowerCase().trim()
-      : args[0].toLowerCase().trim();
+      ? args[0].replace("@", "").trim()
+      : args[0].trim();
 
     if (
       (userstate.username.toLowerCase() === "kelleeluna" ||
@@ -47,7 +47,7 @@ module.exports = {
     ) {
       return client.say(
         channel,
-        `/me ${userstate.username} gives ${user} a great big hug. I love you ʕっ•ᴥ•ʔっ kellee1Love`
+        `/me ${userstate["display-name"]} gives ${user} a great big hug. I love you ʕっ•ᴥ•ʔっ kellee1Love`
       );
     }
 
@@ -55,7 +55,7 @@ module.exports = {
       const index = getRandomElement(aaronHugResponses);
       const response = aaronHugResponses[index].replace(
         /<username>/g,
-        userstate.username
+        userstate["display-name"]
       );
       return client.say(channel, `/me ${response}`);
     }
@@ -63,7 +63,7 @@ module.exports = {
     if (userstate.username.toLowerCase() === user || user === "me") {
       return client.say(
         channel,
-        `/me ${userstate.username} gives themselves a hug because they are lonely.`
+        `/me ${userstate["display-name"]} gives themselves a hug because they are lonely.`
       );
     }
 
@@ -71,14 +71,14 @@ module.exports = {
       const index = getRandomElement(kelleebotHugResponses);
       const response = kelleebotHugResponses[index].replace(
         /<username>/g,
-        userstate.username
+        userstate["display-name"]
       );
       return client.say(channel, `/me ${response}`);
     }
 
     return client.say(
       channel,
-      `/me kellee1Love ${userstate.username} hugs ${user} PrideFlower. I love you ʕっ•ᴥ•ʔっ kellee1Love`
+      `/me kellee1Love ${userstate["display-name"]} hugs ${user} PrideFlower. I love you ʕっ•ᴥ•ʔっ kellee1Love`
     );
   },
 };

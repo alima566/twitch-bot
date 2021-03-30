@@ -32,6 +32,9 @@ module.exports = async (client, channel, userstate, message, self) => {
     client.channelInfoCache.set(channel.slice(1), channelInfo);
 
     const prefix = getChannelPrefix()[channel.slice(1)] || PREFIX;
+    // const prefixRegex = new RegExp(
+    //   `^(kellee1Glare|${escapeRegex(prefix)})\\s*`
+    // );
     const prefixRegex = new RegExp(`^(${escapeRegex(prefix)})\\s*`);
     if (!prefixRegex.test(message)) return;
 
@@ -137,7 +140,7 @@ const checkTwitchChat = (userstate, message, channel) => {
       .then((data) => {
         client.say(
           channel,
-          `/me ${userstate.username}, the mods here don't like reading long messages. Please try to keep it short and sweet.`
+          `/me ${userstate["display-name"]}, the mods here don't like reading long messages. Please try to keep it short and sweet.`
         );
       })
       .catch((e) => {

@@ -32,7 +32,7 @@ module.exports = {
       const index = getRandomElement(aaronBanResponses);
       const response = aaronBanResponses[index].replace(
         "<username>",
-        userstate.username
+        userstate["display-name"]
       );
       return client.say(channel, `/me ${response}`);
     }

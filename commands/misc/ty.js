@@ -14,7 +14,7 @@ module.exports = {
         channel,
         `/me ${COMPLIMENTS[index].replace(
           "<user>",
-          userstate.username
+          userstate["display-name"]
         )} KPOPheart`
       );
     }

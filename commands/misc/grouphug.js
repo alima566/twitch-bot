@@ -7,7 +7,7 @@ module.exports = {
   execute: ({ client, channel, userstate }) => {
     return client.say(
       channel,
-      `/me ${userstate.username} gives everyone a group hug! I love you ʕっ•ᴥ•ʔっ kellee1Love`
+      `/me ${userstate["display-name"]} gives everyone a group hug! I love you ʕっ•ᴥ•ʔっ kellee1Love`
     );
   },
 };

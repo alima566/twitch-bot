@@ -15,7 +15,10 @@ module.exports = {
   globalCooldown: false,
   execute: ({ client, channel, userstate }) => {
     const index = getRandomElement(lurk);
-    const response = lurk[index].replace(/<username>/g, userstate.username);
+    const response = lurk[index].replace(
+      /<username>/g,
+      userstate["display-name"]
+    );
     return client.say(channel, `/me ${response}`);
   },
 };

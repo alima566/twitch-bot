@@ -13,7 +13,10 @@ module.exports = {
   cooldown: 15,
   execute: ({ client, channel, userstate }) => {
     const index = getRandomElement(unlurk);
-    const response = unlurk[index].replace(/<username>/g, userstate.username);
+    const response = unlurk[index].replace(
+      /<username>/g,
+      userstate["display-name"]
+    );
     return client.say(channel, `/me ${response}`);
   },
 };

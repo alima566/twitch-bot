@@ -21,7 +21,7 @@ module.exports = {
 
         return client.say(
           channel,
-          `/me ${userstate.username} followed ${process.env.CHANNEL_NAME} on ${data}.`
+          `/me ${userstate["display-name"]} followed ${process.env.CHANNEL_NAME} on ${data}.`
         );
       })
       .catch((e) => {

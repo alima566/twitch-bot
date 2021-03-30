@@ -20,7 +20,7 @@ module.exports = {
 
         return client.say(
           channel,
-          `/me ${userstate.username} has been following ${process.env.CHANNEL_NAME} for ${data}.`
+          `/me ${userstate["display-name"]} has been following ${process.env.CHANNEL_NAME} for ${data}.`
         );
       })
       .catch((e) => {

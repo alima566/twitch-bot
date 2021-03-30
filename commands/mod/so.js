@@ -15,8 +15,8 @@ module.exports = {
     }
 
     let user = args[0].startsWith("@")
-      ? args[0].replace("@", "").toLowerCase()
-      : args[0].toLowerCase();
+      ? args[0].replace("@", "").trim()
+      : args[0].trim();
 
     fetch(`https://beta.decapi.me/twitch/game/${encodeURIComponent(user)}`)
       .then((resp) => resp.text())
