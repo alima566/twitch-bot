@@ -13,6 +13,8 @@ const pokeBalls = [
   "Sport Ball",
 ];
 
+const vowelRegex = "^[aieouAIEOU].*";
+
 module.exports = {
   name: "redeempokemon",
   aliases: ["catch"],
@@ -27,8 +29,8 @@ module.exports = {
     }
 
     let user = args[0].startsWith("@")
-      ? args[0].replace("@", "").toLowerCase().trim()
-      : args[0].toLowerCase().trim();
+      ? args[0].replace("@", "").trim()
+      : args[0].trim();
     const index = getRandomElement(pokeBalls);
     const pokedexNum = Math.floor(Math.random() * 899);
     const pokeBall = pokeBalls[index];
@@ -36,7 +38,7 @@ module.exports = {
 
     const obj = {
       channel: channel.slice(1),
-      user,
+      user: user.toLowerCase(),
     };
 
     await userPokemonsSchema.findOneAndUpdate(
@@ -61,7 +63,11 @@ module.exports = {
     const { pokemons } = numPokemons;
     return client.say(
       channel,
-      `/me ${user} has captured a ${pokemon} by using a ${pokeBall}! PridePog PridePog Hope you take good care of your Pokémon! 2020Rivalry You have now caught a total of ${
+      `/me ${user} has captured a${
+        pokemon.match(vowelRegex) ? "n" : ""
+      } ${pokemon} by using a${
+        pokeBall.match(vowelRegex) ? "n" : ""
+      } ${pokeBall}! PridePog PridePog Hope you take good care of your Pokémon! 2020Rivalry You have now caught a total of ${
         pokemons.name.length
       } Pokémon${pokemons.name.length !== 1 ? "s" : ""}!`
     );
