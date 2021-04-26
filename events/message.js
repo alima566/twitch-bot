@@ -149,8 +149,9 @@ const checkTwitchChat = (userstate, message, channel) => {
   }
 
   if (
-    message.includes("bigfollows .com") ||
-    message.includes("bigfollows.com") ||
+    message.toLowerCase().includes("bigfollows .com") ||
+    message.toLowerCase().includes("bigfollows.com") ||
+    message.toLowerCase().includes("bigfollows . com") ||
     message.includes(
       "Wanna b̔ecome̤ famoͅus̈́?̿ Bu͗y f̭ollow̮ers, primes and viewers on ̫" //https://clck.ru/R9gQV ͉(bigfollows .com)̰"
     )
